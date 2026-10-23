@@ -1,0 +1,782 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>My First Scrollytelling</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Caveat:wght@500;700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400&display=swap">
+<style>
+/* Layout: a short intro, then one full-screen sticky picture (the "stage") with note-cards scrolling over it, then a closing section. */
+:root {
+  --bg: #e9eeea;
+  --fg: #172a2a;
+  --muted: #4a5f5c;
+  --card: #fbfcfa;
+  --rule: #c5d1cc;
+  --accent: #0f6b5c;
+  --accent-ink: #ffffff;
+  --mark: #ffd84d;
+  --hand: #cf3f2a;
+  --sun: #ffb81f;
+  --tape: rgba(255, 205, 64, 0.75);
+  --st1: #dde7e2;
+  --st2: #d3e6ee;
+  --st3: #efe3d3;
+  --sky: #bfe0f2;
+  --skytop: #8cc4e8;
+  --dawn: #ffd9a8;
+  --night-top: #0a1022;
+  --night-bot: #2d3263;
+  --hill1: #3f8a6b;
+  --hill2: #2f6f58;
+  --cabin: #6b4f3a;
+  --soil: #7a5a3a;
+  --shadow: rgba(10, 30, 28, 0.16);
+  --display: "Bricolage Grotesque", "Trebuchet MS", Verdana, sans-serif;
+  --body: "Literata", Georgia, "Times New Roman", serif;
+  --hand-font: "Caveat", "Comic Sans MS", "Segoe Print", cursive;
+  --mono: "Courier New", Courier, monospace;
+  --sh: calc(100vh - env(safe-area-inset-top, 0px));
+}
+@supports (height: 100svh) {
+  :root { --sh: calc(100svh - env(safe-area-inset-top, 0px)); }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1716; --fg: #e6efe9; --muted: #9db3ad; --card: #16231f; --rule: #2c403b;
+    --accent: #5fd1b3; --accent-ink: #0d1716; --mark: #6d5800; --hand: #ff8f7a; --sun: #ffc74d;
+    --tape: rgba(255, 199, 77, 0.35);
+    --st1: #13211f; --st2: #12283a; --st3: #2a2219; --sky: #1f4560; --skytop: #2a5a85; --dawn: #7a4a3a;
+    --hill1: #2f7258; --hill2: #235846; --cabin: #3a2c22; --soil: #5a432b; --shadow: rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1716; --fg: #e6efe9; --muted: #9db3ad; --card: #16231f; --rule: #2c403b;
+  --accent: #5fd1b3; --accent-ink: #0d1716; --mark: #6d5800; --hand: #ff8f7a; --sun: #ffc74d;
+  --tape: rgba(255, 199, 77, 0.35);
+  --st1: #13211f; --st2: #12283a; --st3: #2a2219; --sky: #1f4560; --skytop: #2a5a85; --dawn: #7a4a3a;
+  --hill1: #2f7258; --hill2: #235846; --cabin: #3a2c22; --soil: #5a432b; --shadow: rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.65;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 10;
+}
+.in {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+mark { background: var(--mark); color: inherit; padding: 0 0.2em; border-radius: 3px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
+
+/* ---------- intro ---------- */
+.hero { padding-block: 64px 56px; }
+.hero .in > * { max-width: 760px; }
+.eyebrow {
+  margin: 0 0 14px;
+  font-family: var(--display); font-weight: 700; font-size: 13px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+}
+.hero h1 { margin: 0 0 22px; font-size: clamp(2.3rem, 7vw, 4.2rem); line-height: 1.02; font-weight: 800; letter-spacing: -0.02em; }
+.lead { font-size: clamp(1.1rem, 2.4vw, 1.3rem); line-height: 1.6; margin: 0 0 14px; }
+.hand-note {
+  font-family: var(--hand-font); font-size: 28px; line-height: 1.1; color: var(--hand);
+  margin: 18px 0 26px; transform: rotate(-2deg); transform-origin: left center; font-weight: 700;
+}
+.facts { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0 0 26px; padding: 0; list-style: none; }
+.facts li { font-family: var(--display); font-size: 14px; font-weight: 600; padding: 6px 12px; border: 1.5px solid var(--rule); border-radius: 999px; background: var(--card); }
+.chapters { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  font-family: var(--display); font-weight: 700; font-size: 15px; text-decoration: none; color: var(--fg);
+  padding: 10px 16px; border-radius: 10px; background: var(--accent); color: var(--accent-ink);
+}
+.chip small { font-weight: 500; opacity: 0.85; margin-left: 6px; }
+.chip:hover { filter: brightness(1.1); }
+
+/* ---------- the stage ---------- */
+.scrolly { position: relative; }
+.stage {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  height: var(--sh);
+  overflow: hidden;
+  z-index: 1;
+  background: var(--st1);
+}
+.steps { position: relative; z-index: 2; margin-top: calc(-1 * var(--sh)); pointer-events: none; }
+.step { min-height: max(var(--sh), 560px); display: flex; align-items: center; padding-block: 24px; }
+.step .in { width: 100%; }
+
+.scene { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s; pointer-events: none; }
+.scene.on { opacity: 1; }
+.s1, .s2, .s6, .s10 { background: var(--st1); }
+.s4, .s9 { background: var(--st2); }
+.s5, .s8 { background: var(--st3); }
+.s7 { background: #0f1b1a; }
+.s3 { background: var(--night-top); }
+
+/* art region: right of the card on desktop, above the card on phones */
+.art, .panel {
+  position: absolute;
+  top: 72px; bottom: 56px;
+  left: calc(max(0px, (100% - 1180px) / 2) + 520px);
+  right: max(16px, calc((100% - 1180px) / 2 + 16px));
+}
+.art svg { width: 100%; height: 100%; display: block; }
+.panel { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; }
+.full { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* hud */
+.hud {
+  position: absolute; top: 14px; left: 0; right: 0; z-index: 3;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-family: var(--display); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.pill { background: var(--card); color: var(--fg); border: 1px solid var(--rule); border-radius: 999px; padding: 6px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px var(--shadow); }
+.pill b { font-weight: 800; }
+.track { width: 70px; height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.track i { display: block; height: 100%; width: 0; background: var(--accent); }
+
+/* cards */
+.card {
+  position: relative;
+  max-width: 470px;
+  margin-right: auto;
+  padding: 28px 30px 24px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px var(--shadow);
+  pointer-events: auto;
+  transform: rotate(-0.5deg);
+}
+.step:nth-child(even) .card { transform: rotate(0.5deg); }
+.card::before {
+  content: ""; position: absolute; top: -11px; left: 30px; width: 76px; height: 22px;
+  background: var(--tape); transform: rotate(-3deg); border-radius: 2px;
+}
+.card .eyebrow { margin-bottom: 8px; }
+.card h2 { margin: 0 0 14px; font-size: clamp(1.6rem, 3.2vw, 2.15rem); line-height: 1.08; font-weight: 800; letter-spacing: -0.01em; }
+.card p { margin: 0 0 12px; }
+.card ul { margin: 0 0 12px; padding-left: 1.15em; }
+.card li { margin-bottom: 8px; }
+.note { font-family: var(--hand-font); font-size: 25px; line-height: 1.15; color: var(--hand); font-weight: 700; margin: 16px 0 0 !important; transform: rotate(-1deg); }
+code { font-family: var(--mono); font-size: 0.9em; background: var(--rule); padding: 1px 6px; border-radius: 4px; }
+
+/* svg paint */
+.f-card { fill: var(--card); } .f-rule { fill: var(--rule); } .f-acc { fill: var(--accent); }
+.f-sun { fill: var(--sun); } .f-hand { fill: var(--hand); } .f-h1 { fill: var(--hill1); } .f-h2 { fill: var(--hill2); }
+.f-sky { fill: var(--sky); } .f-soil { fill: var(--soil); } .f-cabin { fill: var(--cabin); }
+.s-rule { stroke: var(--rule); stroke-width: 3; }
+.s-acc { stroke: var(--accent); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.s-stem { stroke: var(--hill1); stroke-width: 4; stroke-linecap: round; fill: none; }
+svg text { font-family: var(--display); font-weight: 700; fill: var(--fg); }
+
+/* scene 2 */
+.drift { animation: drift 3.2s linear infinite; }
+@keyframes drift { from { transform: translateY(0); } to { transform: translateY(-104px); } }
+
+/* scene 3 sunrise (driven by --p) */
+.sunrise-sun { transform: translateY(calc(var(--p, 0) * -280px)); }
+.night { opacity: calc(1 - var(--p, 0)); }
+.stars { opacity: calc(1 - var(--p, 0) * 1.7); }
+.window-lit { opacity: calc(1 - var(--p, 0) * 1.4); }
+.cloud { opacity: calc(var(--p, 0) * 0.95); animation: cloud 24s ease-in-out infinite alternate; }
+@keyframes cloud { from { transform: translateX(-24px); } to { transform: translateX(24px); } }
+
+/* scene 4 frames */
+.fr { transition: transform 0.35s; }
+.fr.on { transform: translateY(-12px); }
+.fr .fb { fill: var(--card); stroke: var(--rule); stroke-width: 3; transition: stroke 0.3s; }
+.fr.on .fb { stroke: var(--accent); stroke-width: 5; }
+
+/* scene 5 timeline */
+.tl { list-style: none; margin: 0; padding: 0 0 0 26px; position: relative; display: flex; flex-direction: column; gap: 18px; max-width: 560px; }
+.tl::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 3px; background: var(--rule); border-radius: 2px; }
+.tl li { position: relative; opacity: 0.18; transform: translateX(10px); transition: opacity 0.5s, transform 0.5s; }
+.tl li.on { opacity: 1; transform: none; }
+.tl li::before { content: ""; position: absolute; left: -26px; top: 6px; width: 17px; height: 17px; border-radius: 50%; background: var(--accent); border: 3px solid var(--st3); }
+.tl .when { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--accent); display: block; line-height: 1.2; }
+.tl .what { font-size: 15.5px; line-height: 1.5; color: var(--fg); }
+.tl em { font-style: normal; font-weight: 600; }
+
+/* scene 6 bars */
+.chart-title { font-family: var(--display); font-weight: 700; font-size: 17px; text-align: center; margin: 0; }
+.plot { width: min(100%, 520px); height: min(270px, 34vh); display: flex; align-items: flex-end; gap: clamp(8px, 3vw, 22px); border-bottom: 3px solid var(--fg); padding-inline: 6px; }
+.col { flex: 1; min-width: 0; height: 100%; display: flex; align-items: flex-end; }
+.bar { position: relative; width: 100%; height: 0; background: var(--accent); border-radius: 8px 8px 0 0; transition: height 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.scene.on .bar { height: var(--h); }
+.col:nth-child(2) .bar { transition-delay: 0.1s; } .col:nth-child(3) .bar { transition-delay: 0.2s; }
+.col:nth-child(4) .bar { transition-delay: 0.3s; } .col:nth-child(5) .bar { transition-delay: 0.4s; }
+.bar span { position: absolute; top: -30px; left: 0; right: 0; text-align: center; font-family: var(--display); font-weight: 800; font-size: 20px; }
+.days { width: min(100%, 520px); display: flex; gap: clamp(8px, 3vw, 22px); padding-inline: 6px; margin-top: -6px; }
+.days span { flex: 1; text-align: center; font-family: var(--display); font-weight: 600; font-size: 15px; color: var(--muted); }
+.tiny { font-family: var(--hand-font); font-size: 22px; color: var(--hand); margin: 0; font-weight: 700; }
+
+/* scene 7 code */
+.code { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 14px; }
+.code label { font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #7fe0c4; display: block; margin-bottom: 6px; }
+.code pre {
+  margin: 0; overflow-x: auto; background: #08120f; color: #e6efe9; border: 1px solid #28403a; border-radius: 10px;
+  padding: 14px 16px; font-family: var(--mono); font-size: 14px; line-height: 1.55;
+}
+.code .cm { color: #8fb3aa; } .code .kw { color: #7fe0c4; } .code .st { color: #ffd84d; }
+.code small { color: #8fb3aa; font-family: var(--display); font-size: 13px; }
+
+/* scene 9 phone */
+.phone { height: min(52vh, 390px); aspect-ratio: 9 / 17; border: 5px solid var(--fg); border-radius: 26px; overflow: hidden; position: relative; background: var(--card); }
+.phone .pic { position: absolute; left: 0; right: 0; top: 30%; height: 46%; background: var(--sky); z-index: 2; transition: top 0.7s ease, height 0.7s ease; overflow: hidden; border-bottom: 3px solid var(--accent); }
+.phone .pic i { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: var(--sun); right: 18%; top: 26%; }
+.phone .pic b { position: absolute; left: 0; right: 0; bottom: 0; height: 38%; background: var(--hill1); border-radius: 60% 60% 0 0 / 100% 100% 0 0; }
+.phone .txt { position: absolute; left: 10%; right: 10%; top: 24%; display: flex; flex-direction: column; gap: 10px; transition: top 0.7s ease; }
+.phone .txt u { display: block; height: 9px; border-radius: 4px; background: var(--rule); text-decoration: none; }
+.phone .txt u:first-child { background: var(--accent); width: 55%; height: 12px; }
+.phone.fixed .pic { top: 0; height: 34%; }
+.phone.fixed .txt { top: 41%; }
+.verdict { font-family: var(--display); font-weight: 700; font-size: 16px; text-align: center; min-height: 1.4em; }
+.verdict .after { display: none; color: var(--accent); }
+.verdict .before { color: var(--hand); }
+.phone-wrap.fixed .verdict .after { display: inline; }
+.phone-wrap.fixed .verdict .before { display: none; }
+
+/* scene 10 checklist */
+.check { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 520px; }
+.check li { display: flex; align-items: center; gap: 14px; font-family: var(--display); font-weight: 600; font-size: clamp(16px, 2.2vw, 20px); line-height: 1.3; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 12px 16px; transition: opacity 0.4s, border-color 0.4s; opacity: 0.55; }
+.check li.on { opacity: 1; border-color: var(--accent); }
+.check .box { flex: none; width: 26px; height: 26px; border: 3px solid var(--fg); border-radius: 7px; position: relative; transition: background 0.3s; }
+.check li.on .box { background: var(--accent); border-color: var(--accent); }
+.check li.on .box::after { content: ""; position: absolute; left: 6px; top: 1px; width: 7px; height: 14px; border: solid var(--accent-ink); border-width: 0 3px 3px 0; transform: rotate(45deg); }
+
+/* ---------- closing ---------- */
+.closing { background: var(--card); border-top: 1px solid var(--rule); padding-block: 72px 56px; }
+.closing .grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; }
+.closing h2 { margin: 0 0 18px; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.08; font-weight: 800; letter-spacing: -0.01em; }
+.closing h3 { margin: 0 0 12px; font-size: 1.15rem; font-weight: 700; }
+.make { list-style: none; counter-reset: s; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.make li { counter-increment: s; position: relative; padding-left: 52px; }
+.make li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--display); font-weight: 800; display: grid; place-items: center; }
+.make b { font-family: var(--display); font-weight: 700; }
+dl { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+dt { font-family: var(--display); font-weight: 700; color: var(--accent); }
+dd { margin: 0; font-size: 16px; line-height: 1.55; }
+.reading { margin-top: 44px; padding-top: 24px; border-top: 2px dashed var(--rule); }
+.reading ul { margin: 0; padding-left: 1.1em; }
+.reading li { margin-bottom: 8px; }
+.sign { margin-top: 44px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; }
+.sign p { margin: 0; font-family: var(--hand-font); font-size: 30px; line-height: 1.1; color: var(--hand); font-weight: 700; transform: rotate(-1deg); }
+
+@media (max-width: 900px) {
+  body { font-size: 16px; }
+  .hero { padding-block: 40px 36px; }
+  .art, .panel { top: 62px; bottom: 47%; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); }
+  .step { align-items: flex-end; padding-bottom: 16px; }
+  .card { max-width: none; margin-inline: 0; padding: 22px 20px 18px; transform: none !important; }
+  .card h2 { font-size: 1.45rem; margin-bottom: 10px; }
+  .card p { margin-bottom: 9px; }
+  .note { font-size: 22px; margin-top: 10px !important; }
+  .hud { font-size: 12px; }
+  .pill { padding: 5px 11px; gap: 8px; }
+  .track { width: 44px; }
+  .phone { height: min(24vh, 200px); }
+  .tl { gap: 10px; } .tl .when { font-size: 16px; } .tl .what { font-size: 13.5px; line-height: 1.4; }
+  .plot { height: min(150px, 20vh); } .bar span { font-size: 16px; top: -24px; }
+  .check { gap: 8px; } .check li { padding: 8px 12px; font-size: 14px; } .check .box { width: 22px; height: 22px; }
+  .code pre { font-size: 11.5px; padding: 10px 12px; } .code { gap: 8px; }
+  .closing { padding-block: 48px 40px; }
+  .closing .grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .drift, .cloud { animation: none; }
+  .scene, .tl li, .bar, .fr, .phone .pic, .phone .txt, .check li { transition: none; }
+}
+</style>
+
+<header class="hero" id="top">
+  <div class="in">
+    <p class="eyebrow">A scrolling story &middot; about 4 minutes</p>
+    <h1>Scroll slowly. I want to show you <mark>something</mark>.</h1>
+    <p class="lead">Hi. I'm learning to build websites, and this is the first big thing I've made. It's about a trick called scrollytelling, where the picture changes while you read.</p>
+    <p class="lead">I figured the best way to explain it was to do it. So that's what this page is.</p>
+    <p class="hand-note">(yes, you. keep going!)</p>
+    <ul class="facts">
+      <li>10 scenes</li>
+      <li>plain HTML, CSS and a pinch of JavaScript</li>
+      <li>made to be read on a phone</li>
+    </ul>
+    <nav class="chapters" aria-label="Jump to a part">
+      <a class="chip" href="#before">Part 1<small>Before</small></a>
+      <a class="chip" href="#idea">Part 2<small>The idea</small></a>
+      <a class="chip" href="#making">Part 3<small>Making one</small></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="scrolly" id="scrolly" aria-label="The story">
+  <div class="stage" id="stage" aria-hidden="true">
+    <div class="hud in">
+      <span class="pill">Scene <b id="num">1</b> of 10 &middot; <span id="name">a plain page</span></span>
+      <span class="pill">scroll <b id="pct">0%</b><span class="track"><i id="bar"></i></span></span>
+    </div>
+
+    <!-- 1: a plain page -->
+    <div class="scene s1 on">
+      <div class="art">
+        <svg viewBox="0 0 560 420" preserveAspectRatio="xMidYMid meet">
+          <rect class="f-card s-rule" x="10" y="10" width="540" height="400" rx="14"/>
+          <rect class="f-rule" x="11.5" y="11.5" width="537" height="38" rx="12"/>
+          <circle class="f-hand" cx="34" cy="30" r="6"/><circle class="f-sun" cx="54" cy="30" r="6"/><circle class="f-acc" cx="74" cy="30" r="6"/>
+          <rect class="f-card" x="104" y="19" width="300" height="22" rx="11"/>
+          <rect class="f-acc" x="40" y="80" width="210" height="24" rx="4"/>
+          <rect class="f-rule" x="40" y="126" width="460" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="152" width="420" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="178" width="440" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="204" width="330" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="236" width="460" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="262" width="420" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="288" width="440" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="314" width="360" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="346" width="440" height="10" rx="3"/>
+          <rect class="f-rule" x="40" y="372" width="300" height="10" rx="3"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 2: the page just moves -->
+    <div class="scene s2">
+      <div class="art">
+        <svg viewBox="0 0 560 420" preserveAspectRatio="xMidYMid meet">
+          <defs><clipPath id="winclip"><rect x="11.5" y="50" width="537" height="358" rx="12"/></clipPath></defs>
+          <rect class="f-card" x="10" y="10" width="540" height="400" rx="14"/>
+          <g clip-path="url(#winclip)"><g class="drift f-rule" id="drift"></g></g>
+          <rect fill="none" class="s-rule" x="10" y="10" width="540" height="400" rx="14"/>
+          <rect class="f-rule" x="11.5" y="11.5" width="537" height="38" rx="12"/>
+          <circle class="f-hand" cx="34" cy="30" r="6"/><circle class="f-sun" cx="54" cy="30" r="6"/><circle class="f-acc" cx="74" cy="30" r="6"/>
+          <rect class="f-card" x="104" y="19" width="300" height="22" rx="11"/>
+          <path class="s-acc" d="M520 120 V300 M504 282 L520 302 L536 282"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 3: sunrise, driven by scroll -->
+    <div class="scene s3">
+      <svg class="full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMax slice">
+        <defs>
+          <linearGradient id="dayg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--skytop)"/><stop offset="1" style="stop-color:var(--dawn)"/></linearGradient>
+          <linearGradient id="nightg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--night-top)"/><stop offset="1" style="stop-color:var(--night-bot)"/></linearGradient>
+        </defs>
+        <rect x="0" y="-200" width="800" height="800" fill="url(#dayg)"/>
+        <rect class="night" x="0" y="-200" width="800" height="800" fill="url(#nightg)"/>
+        <g class="stars" fill="#ffffff">
+          <circle cx="90" cy="60" r="2"/><circle cx="210" cy="130" r="1.6"/><circle cx="330" cy="40" r="2.2"/><circle cx="440" cy="110" r="1.5"/>
+          <circle cx="560" cy="50" r="2"/><circle cx="660" cy="140" r="1.8"/><circle cx="740" cy="70" r="2"/><circle cx="150" cy="220" r="1.4"/>
+          <circle cx="390" cy="210" r="1.6"/><circle cx="620" cy="230" r="1.5"/><circle cx="270" cy="270" r="1.3"/><circle cx="500" cy="290" r="1.4"/>
+          <circle cx="40" cy="160" r="1.5"/><circle cx="715" cy="260" r="1.6"/>
+        </g>
+        <circle class="stars" cx="190" cy="90" r="20" fill="#f3f0d8"/>
+        <g class="cloud"><ellipse cx="250" cy="170" rx="60" ry="16" fill="#ffffff"/><ellipse cx="290" cy="160" rx="38" ry="14" fill="#ffffff"/></g>
+        <g class="cloud" style="animation-delay:-8s"><ellipse cx="620" cy="120" rx="54" ry="14" fill="#ffffff"/><ellipse cx="650" cy="110" rx="32" ry="12" fill="#ffffff"/></g>
+        <g class="sunrise-sun"><circle class="f-sun" cx="500" cy="530" r="74" opacity="0.28"/><circle class="f-sun" cx="500" cy="530" r="48"/></g>
+        <path class="f-h2" d="M0 600 L0 450 Q150 380 300 440 T600 425 T800 410 L800 600 Z"/>
+        <path class="f-h1" d="M0 600 L0 515 Q200 455 400 508 T800 492 L800 600 Z"/>
+        <g>
+          <rect class="f-cabin" x="350" y="466" width="46" height="32"/>
+          <polygon class="f-cabin" points="344,467 373,446 402,467"/>
+          <rect class="f-sun window-lit" x="366" y="476" width="12" height="12"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 4: flipbook frames -->
+    <div class="scene s4">
+      <div class="art">
+        <svg viewBox="0 0 560 270" preserveAspectRatio="xMidYMid meet">
+          <g transform="translate(20,24)"><g class="fr on" id="fr0"><rect class="fb" x="0" y="0" width="96" height="130" rx="10"/>
+            <path class="f-soil" d="M8 112 Q48 98 88 112 L88 122 Q88 124 86 124 L10 124 Q8 124 8 122Z"/><circle cx="48" cy="106" r="4.5" fill="#3a2a1a"/></g><text x="48" y="156" text-anchor="middle" font-size="20">1</text></g>
+          <g transform="translate(128,24)"><g class="fr" id="fr1"><rect class="fb" x="0" y="0" width="96" height="130" rx="10"/>
+            <path class="f-soil" d="M8 112 Q48 98 88 112 L88 122 Q88 124 86 124 L10 124 Q8 124 8 122Z"/>
+            <path class="s-stem" d="M48 108 L48 90"/><ellipse class="f-h1" cx="56" cy="90" rx="9" ry="4.5" transform="rotate(-25 56 90)"/></g><text x="48" y="156" text-anchor="middle" font-size="20">2</text></g>
+          <g transform="translate(236,24)"><g class="fr" id="fr2"><rect class="fb" x="0" y="0" width="96" height="130" rx="10"/>
+            <path class="f-soil" d="M8 112 Q48 98 88 112 L88 122 Q88 124 86 124 L10 124 Q8 124 8 122Z"/>
+            <path class="s-stem" d="M48 108 L48 66"/><ellipse class="f-h1" cx="58" cy="84" rx="10" ry="5" transform="rotate(-25 58 84)"/><ellipse class="f-h1" cx="38" cy="74" rx="10" ry="5" transform="rotate(25 38 74)"/></g><text x="48" y="156" text-anchor="middle" font-size="20">3</text></g>
+          <g transform="translate(344,24)"><g class="fr" id="fr3"><rect class="fb" x="0" y="0" width="96" height="130" rx="10"/>
+            <path class="f-soil" d="M8 112 Q48 98 88 112 L88 122 Q88 124 86 124 L10 124 Q8 124 8 122Z"/>
+            <path class="s-stem" d="M48 108 L48 46"/><ellipse class="f-h1" cx="58" cy="92" rx="10" ry="5" transform="rotate(-25 58 92)"/><ellipse class="f-h1" cx="38" cy="80" rx="10" ry="5" transform="rotate(25 38 80)"/><ellipse class="f-h1" cx="58" cy="66" rx="10" ry="5" transform="rotate(-25 58 66)"/><ellipse class="f-h1" cx="38" cy="54" rx="10" ry="5" transform="rotate(25 38 54)"/></g><text x="48" y="156" text-anchor="middle" font-size="20">4</text></g>
+          <g transform="translate(452,24)"><g class="fr" id="fr4"><rect class="fb" x="0" y="0" width="96" height="130" rx="10"/>
+            <path class="f-soil" d="M8 112 Q48 98 88 112 L88 122 Q88 124 86 124 L10 124 Q8 124 8 122Z"/>
+            <path class="s-stem" d="M48 108 L48 42"/><ellipse class="f-h1" cx="58" cy="90" rx="10" ry="5" transform="rotate(-25 58 90)"/><ellipse class="f-h1" cx="38" cy="74" rx="10" ry="5" transform="rotate(25 38 74)"/>
+            <circle class="f-hand" cx="48" cy="26" r="8"/><circle class="f-hand" cx="48" cy="42" r="8"/><circle class="f-hand" cx="40" cy="34" r="8"/><circle class="f-hand" cx="56" cy="34" r="8"/><circle class="f-sun" cx="48" cy="34" r="7"/></g><text x="48" y="156" text-anchor="middle" font-size="20">5</text></g>
+          <rect class="f-rule" x="20" y="205" width="528" height="10" rx="5"/>
+          <rect class="f-acc" id="slfill" x="20" y="205" width="0" height="10" rx="5"/>
+          <circle id="slh" cx="20" cy="210" r="14" class="f-acc" stroke="var(--card)" stroke-width="4"/>
+          <text x="20" y="252" font-size="18" style="fill:var(--muted)">your scroll position</text>
+          <text id="frtxt" x="548" y="252" text-anchor="end" font-size="18">frame 1 of 5</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 5: timeline -->
+    <div class="scene s5">
+      <div class="panel">
+        <ol class="tl" id="tl">
+          <li class="on"><span class="when">December 2012</span><span class="what">The New York Times publishes <em>Snow Fall</em>, John Branch's story about an avalanche at Tunnel Creek. Parts of it moved as readers scrolled.</span></li>
+          <li><span class="when">2015</span><span class="what">The word "scrollytelling" is in everyday use, and people give talks about how to build it.</span></li>
+          <li><span class="when">2016</span><span class="what">Robert Kosara writes <em>The Scrollytelling Scourge</em>, warning that it can be buggy, distracting and overused.</span></li>
+          <li><span class="when">2017</span><span class="what">The Pudding starts publishing visual essays about culture.</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 6: bars -->
+    <div class="scene s6">
+      <div class="panel">
+        <p class="chart-title">Cups of tea while writing this</p>
+        <div class="plot">
+          <div class="col"><div class="bar" style="--h:28.6%"><span>2</span></div></div>
+          <div class="col"><div class="bar" style="--h:42.9%"><span>3</span></div></div>
+          <div class="col"><div class="bar" style="--h:71.4%"><span>5</span></div></div>
+          <div class="col"><div class="bar" style="--h:57.1%"><span>4</span></div></div>
+          <div class="col"><div class="bar" style="--h:100%"><span>7</span></div></div>
+        </div>
+        <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
+        <p class="tiny">(made-up numbers, for practice)</p>
+      </div>
+    </div>
+
+    <!-- 7: code -->
+    <div class="scene s7">
+      <div class="panel">
+        <div class="code">
+          <div>
+            <label>Idea 1 &middot; stick the picture</label>
+<pre><span class="cm">/* CSS */</span>
+.stage {
+  <span class="kw">position</span>: <span class="st">sticky</span>;
+  <span class="kw">top</span>: <span class="st">0</span>;
+  <span class="kw">height</span>: <span class="st">100vh</span>;
+}</pre>
+          </div>
+          <div>
+            <label>Idea 2 &middot; who is in the middle?</label>
+<pre><span class="cm">// JavaScript</span>
+steps.forEach(<span class="kw">function</span> (step) {
+  <span class="kw">if</span> (isInMiddle(step)) {
+    stage.dataset.scene = step.dataset.scene;
+  }
+});</pre>
+          </div>
+          <small>Simplified on purpose. The real one is a little longer.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8: oops -->
+    <div class="scene s8">
+      <div class="art">
+        <svg viewBox="0 0 560 420" preserveAspectRatio="xMidYMid meet">
+          <rect class="f-card s-rule" x="30" y="40" width="300" height="210" rx="12"/>
+          <rect class="f-acc" x="54" y="64" width="150" height="16" rx="4"/>
+          <rect class="f-rule" x="54" y="100" width="250" height="10" rx="3"/>
+          <rect class="f-rule" x="54" y="124" width="220" height="10" rx="3"/>
+          <rect class="f-rule" x="54" y="148" width="250" height="10" rx="3"/>
+          <rect class="f-rule" x="54" y="172" width="180" height="10" rx="3"/>
+          <rect class="f-rule" x="54" y="196" width="240" height="10" rx="3"/>
+          <g class="wobble" style="transform-box:fill-box;transform-origin:center">
+            <rect class="f-sky s-acc" x="190" y="130" width="340" height="220" rx="12"/>
+            <circle class="f-sun" cx="460" cy="188" r="26"/>
+            <path class="f-h1" d="M192 348 L192 300 Q290 252 380 300 T528 290 L528 348 Z"/>
+          </g>
+          <text x="34" y="398" font-size="58" fill="var(--hand)" style="fill:var(--hand)" transform="rotate(-5 34 398)">oops.</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 9: phone test -->
+    <div class="scene s9">
+      <div class="panel phone-wrap" id="phonewrap">
+        <div class="phone" id="phone">
+          <div class="txt"><u></u><u></u><u></u><u style="width:70%"></u><u></u><u style="width:50%"></u></div>
+          <div class="pic"><i></i><b></b></div>
+        </div>
+        <p class="verdict"><span class="before">Before: the picture covers the words</span><span class="after">After: picture on top, words below</span></p>
+      </div>
+    </div>
+
+    <!-- 10: checklist -->
+    <div class="scene s10">
+      <div class="panel">
+        <ul class="check" id="check">
+          <li><span class="box"></span>Text big enough to read without zooming</li>
+          <li><span class="box"></span>Looks right in light and dark mode</li>
+          <li><span class="box"></span>Respects "reduce motion" settings</li>
+          <li><span class="box"></span>Nothing scrolls sideways</li>
+          <li><span class="box"></span>Tested with a real thumb</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps" id="steps">
+    <div class="step" id="before" data-name="a plain page">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 1 &middot; Before</p>
+        <h2>Let's start with a normal web page</h2>
+        <p>This is what most pages look like. A title, some lines of text, a white sheet. You read, you scroll, you leave.</p>
+        <p>Nothing wrong with that! I just wanted you to see it first, so you can notice what changes later.</p>
+        <p class="note">I almost skipped this scene. Glad I didn't.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="the page just moves">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 1 &middot; Before</p>
+        <h2>Scrolling only moves things</h2>
+        <p>On a normal page the words slide up and that's the whole trick. Scroll fast or slow, the page can't tell the difference.</p>
+        <p>It has no idea where you are in the story. That's the part scrollytelling fixes.</p>
+        <p class="note">see the lines drifting? same lines, forever.</p>
+      </div></div>
+    </div>
+
+    <div class="step" id="idea" data-name="a sunrise">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 2 &middot; The idea</p>
+        <h2>Now the picture starts <mark>paying attention</mark></h2>
+        <p>Look at the sky. It's night, and the sun is hiding behind the hills. As you scroll through this card, the sun climbs and the sky turns to day.</p>
+        <p>Scroll back up and the sun sinks again. You're not watching an animation. You're steering one, with your thumb.</p>
+        <p class="note">this is the moment I got excited.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="a flipbook">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 2 &middot; The idea</p>
+        <h2>One scroll position, one frame</h2>
+        <p>Here's the secret. Your scroll position is just a number. If you chop a picture into frames, each number can pick a frame, like a flipbook.</p>
+        <p>Scroll through this card and watch the little plant grow. Five frames, and the slider shows exactly where you are.</p>
+        <p class="note">flipbooks, but for grown-ups.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="where it came from">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 2 &middot; The idea</p>
+        <h2>Where this came from</h2>
+        <p>People have been scrolling web pages for decades, but telling a story with the scroll took a while to catch on.</p>
+        <p>The timeline fills in as you read. These are a few moments I found while researching, and the links are at the bottom of the page.</p>
+        <p class="note">even the fans say it can be too much. I'm keeping that in mind.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="numbers that grow">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 2 &middot; The idea</p>
+        <h2>Numbers can scroll too</h2>
+        <p>News teams love this for data. A chart can build itself while you read about it, one bar at a time.</p>
+        <p>I don't have real data for a first project, so here is how many cups of tea I had this week while writing. I made the numbers up. Mostly.</p>
+        <p class="note">(7 on Friday is a cry for help)</p>
+      </div></div>
+    </div>
+
+    <div class="step" id="making" data-name="two ideas">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 3 &middot; Making one</p>
+        <h2>Two ideas hold it all together</h2>
+        <p><b>Idea one.</b> Stick the picture to the screen with a CSS rule called <code>position: sticky</code>. The words scroll past and the picture stays put.</p>
+        <p><b>Idea two.</b> A short script asks which block of words is in the middle of the screen, then tells the picture which scene to show.</p>
+        <p class="note">that's honestly it. the rest is drawing.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="my mistakes">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 3 &middot; Making one</p>
+        <h2>Mistakes I made along the way</h2>
+        <ul>
+          <li>My first version had words sitting on top of other words.</li>
+          <li>On my phone the picture covered the text I was trying to read.</li>
+          <li>The page scrolled sideways once, and I never found out why.</li>
+          <li>I made everything animate. It was awful.</li>
+        </ul>
+        <p class="note">less moving stuff = better, I think.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="the phone test">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 3 &middot; Making one</p>
+        <h2>Test it on a phone</h2>
+        <p>Most people will read this on a phone, so build that version first and stretch it for big screens afterwards.</p>
+        <p>Scroll and watch the phone change. First the picture sits on top of the words. Then I move it up and give the words their own space.</p>
+        <p class="note">do this before you show anyone.</p>
+      </div></div>
+    </div>
+
+    <div class="step" data-name="finishing touches">
+      <div class="in"><div class="card">
+        <p class="eyebrow">Part 3 &middot; Making one</p>
+        <h2>The finishing touches</h2>
+        <p>The last ten percent is small stuff that nobody notices until it's missing. Fonts that are easy to read. Colors that work at night. Motion that switches off for people who ask for that.</p>
+        <p>Keep scrolling and the checklist fills in.</p>
+        <p class="note">okay. I think it's done. (is it ever?)</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="in">
+    <div class="grid">
+      <div>
+        <h2>If you want to make your own</h2>
+        <ol class="make">
+          <li><b>Pick a story with a beginning, a middle and an end.</b> If you can't tell it out loud in a minute, it's too big for a first try.</li>
+          <li><b>Cut it into short steps.</b> One idea each, a few sentences at most.</li>
+          <li><b>Choose one picture per step.</b> Sketch them on paper before you open any code.</li>
+          <li><b>Build the sticky stage first, then add the steps.</b> Get one scene working before you start the second.</li>
+          <li><b>Test on a phone, then in dark mode.</b> Fix what looks wrong, not what looks fine.</li>
+          <li><b>Cut anything that moves for no reason.</b> Movement should always carry the story.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Words I learned</h3>
+        <dl>
+          <dt>Scrollytelling</dt><dd>Telling a story where scrolling changes what's on the screen.</dd>
+          <dt>Scene</dt><dd>One picture the story shows for a while. This page has ten.</dd>
+          <dt>Step</dt><dd>One block of words. When it reaches the middle of the screen, its scene appears.</dd>
+          <dt>Sticky</dt><dd>A CSS setting that pins something to the screen while everything around it scrolls.</dd>
+          <dt>Viewport</dt><dd>The part of the page you can see right now.</dd>
+          <dt>Scrolljacking</dt><dd>When a site takes over scrolling so it stops feeling like yours. Critics of scrollytelling worry about this a lot.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="reading">
+      <h3>Where I read about it</h3>
+      <ul>
+        <li><a href="https://source.opennews.org/articles/how-we-made-snow-fall/" target="_blank" rel="noopener">How we made Snow Fall</a>, the team's own account of building it</li>
+        <li><a href="https://nightingaledvs.com/the-past-present-and-future-of-scrollytelling/" target="_blank" rel="noopener">The past, present and future of scrollytelling</a>, on the Nightingale site</li>
+        <li><a href="https://pudding.cool/about" target="_blank" rel="noopener">About The Pudding</a>, a publication of visual essays</li>
+      </ul>
+    </div>
+
+    <div class="sign">
+      <p>Thanks for scrolling all the way down. Go make something that's yours.</p>
+      <a href="#top">Back to the top</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var section = document.getElementById('scrolly');
+  var steps = [].slice.call(document.querySelectorAll('.step'));
+  var scenes = [].slice.call(stage.querySelectorAll('.scene'));
+  var num = document.getElementById('num');
+  var nameEl = document.getElementById('name');
+  var pct = document.getElementById('pct');
+  var bar = document.getElementById('bar');
+  var frames = [].slice.call(stage.querySelectorAll('.fr'));
+  var slFill = document.getElementById('slfill');
+  var slH = document.getElementById('slh');
+  var frTxt = document.getElementById('frtxt');
+  var tl = [].slice.call(document.querySelectorAll('#tl li'));
+  var checks = [].slice.call(document.querySelectorAll('#check li'));
+  var phone = document.getElementById('phone');
+  var phoneWrap = document.getElementById('phonewrap');
+  var mq = window.matchMedia('(max-width: 900px)');
+  var current = 0, ticking = false;
+
+  // lines for the drifting page in scene 2
+  (function () {
+    var g = document.getElementById('drift');
+    var w = [420, 380, 440, 330], out = '';
+    for (var i = 0; i < 18; i++) {
+      out += '<rect x="40" y="' + (66 + i * 26) + '" width="' + w[i % 4] + '" height="10" rx="3"/>';
+    }
+    g.innerHTML = out;
+  })();
+
+  function clamp(n) { return Math.max(0, Math.min(1, n)); }
+
+  function setScene(i) {
+    if (i === current) return;
+    current = i;
+    scenes.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    num.textContent = String(i + 1);
+    nameEl.textContent = steps[i].getAttribute('data-name');
+  }
+
+  function update() {
+    ticking = false;
+    var vh = window.innerHeight;
+    var line = vh * (mq.matches ? 0.62 : 0.5);
+    var best = 0, bestDist = Infinity;
+    steps.forEach(function (s, i) {
+      var r = s.getBoundingClientRect();
+      var d = Math.abs(r.top + r.height / 2 - line);
+      if (d < bestDist) { bestDist = d; best = i; }
+    });
+    setScene(best);
+
+    var r = steps[best].getBoundingClientRect();
+    var p = clamp((line - r.top) / r.height);
+    stage.style.setProperty('--p', p.toFixed(3));
+
+    if (best === 3) {
+      var f = Math.min(4, Math.floor(p * 5));
+      frames.forEach(function (g, k) { g.classList.toggle('on', k === f); });
+      slFill.setAttribute('width', (p * 528).toFixed(1));
+      slH.setAttribute('cx', (20 + p * 528).toFixed(1));
+      frTxt.textContent = 'frame ' + (f + 1) + ' of 5';
+    } else if (best === 4) {
+      var n = Math.min(4, Math.floor(p * 4) + 1);
+      tl.forEach(function (li, k) { li.classList.toggle('on', k < n); });
+    } else if (best === 8) {
+      var fixed = p >= 0.45;
+      phone.classList.toggle('fixed', fixed);
+      phoneWrap.classList.toggle('fixed', fixed);
+    } else if (best === 9) {
+      var c = Math.min(5, Math.floor(p * 6));
+      checks.forEach(function (li, k) { li.classList.toggle('on', k < c); });
+    }
+
+    var rs = section.getBoundingClientRect();
+    var total = clamp(-rs.top / Math.max(1, rs.height - vh));
+    var pc = Math.round(total * 100);
+    pct.textContent = pc + '%';
+    bar.style.width = pc + '%';
+  }
+
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
+})();
+</script>
+
+</body></html>
